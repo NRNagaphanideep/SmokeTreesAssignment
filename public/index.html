@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Registration</title>
+    <style>
+      :root {
+        --primary-color: #3498db;
+        --secondary-color: #2980b9;
+        --background-color: #ecf0f1;
+        --text-color: #2c3e50;
+        --error-color: #e74c3c;
+        --success-color: #2ecc71;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      label {
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+
+      input {
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      button {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: var(--secondary-color);
+      }
+
+      #result {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 4px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .success {
+        background-color: var(--success-color);
+        color: white;
+      }
+
+      .error {
+        background-color: var(--error-color);
+        color: white;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>User Registration</h1>
+      <form id="registrationForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required />
+
+        <button type="submit">Register</button>
+      </form>
+
+      <div id="result"></div>
+    </div>
+
+    <script>
+      document
+        .getElementById("registrationForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const data = Object.fromEntries(formData.entries());
+
+          try {
+            const response = await fetch("/api/register", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            const resultElement = document.getElementById("result");
+            resultElement.textContent = result.message;
+            resultElement.className = response.ok ? "success" : "error";
+          } catch (error) {
+            console.error("Error:", error);
+            const resultElement = document.getElementById("result");
+            resultElement.textContent = "An error occurred. Please try again.";
+            resultElement.className = "error";
+          }
+        });
+    </script>
+  </body>
+</html>
